@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DesignPatternLab.Characters.Bike
 {
-    // Adapted from David Baron, Chapter 5.
+    // Chapters 5-7: State receiver, race subscriber, and command receiver.
     [DisallowMultipleComponent]
     public class BikeController : MonoBehaviour
     {
@@ -13,12 +13,19 @@ namespace DesignPatternLab.Characters.Bike
         public float CurrentSpeed { get; set; }
         public Direction CurrentTurnDirection { get; private set; }
         public IBikeState CurrentState => _bikeStateContext.CurrentState;
+        public bool IsTurboOn => _isTurboOn;
 
         private IBikeState _startState, _stopState, _turnState;
         private BikeStateContext _bikeStateContext;
+        private bool _isTurboOn;
+        private Vector3 _initialPosition;
+        private Quaternion _initialRotation;
 
         private void Awake()
         {
+            _initialPosition = transform.position;
+            _initialRotation = transform.rotation;
+
             // Initialize before other components can issue commands in Start.
             _bikeStateContext = new BikeStateContext(this);
             _startState = gameObject.AddComponent<BikeStartState>();
@@ -57,6 +64,21 @@ namespace DesignPatternLab.Characters.Bike
         {
             CurrentTurnDirection = direction;
             _bikeStateContext.Transition(_turnState);
+        }
+
+        public void ToggleTurbo()
+        {
+            // Like the chapter's skeleton, turbo is a status toggle for now.
+            _isTurboOn = !_isTurboOn;
+            Debug.Log("Turbo Active: " + _isTurboOn);
+        }
+
+        public void ResetPosition()
+        {
+            StopBike();
+            transform.position = _initialPosition;
+            transform.rotation = _initialRotation;
+            _isTurboOn = false;
         }
     }
 }

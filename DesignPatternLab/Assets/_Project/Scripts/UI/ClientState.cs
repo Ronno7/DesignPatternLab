@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DesignPatternLab.UI
 {
-    // Chapter 5's local turn controls. Chapter 6's events now start/stop the race.
+    // State display only. InputHandler now sends all player actions through Invoker.
     [RequireComponent(typeof(BikeController))]
     public class ClientState : MonoBehaviour
     {
@@ -16,18 +16,12 @@ namespace DesignPatternLab.UI
 
         private void OnGUI()
         {
-            GUILayout.BeginArea(new Rect(12, 104, 228, 160), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(12, 104, 228, 96), GUI.skin.box);
             GUILayout.Label("Bike state - Chapter 5");
             GUILayout.Label("State: " + _bikeController.CurrentState.GetType().Name);
             GUILayout.Label("Speed: " + _bikeController.CurrentSpeed.ToString("0.0"));
 
-            if (GUILayout.Button("Turn Left"))
-                _bikeController.Turn(Direction.Left);
-
-            if (GUILayout.Button("Turn Right"))
-                _bikeController.Turn(Direction.Right);
-
-            GUILayout.Label("Turn after the countdown.");
+            GUILayout.Label("Turbo: " + (_bikeController.IsTurboOn ? "On" : "Off"));
             GUILayout.EndArea();
         }
     }

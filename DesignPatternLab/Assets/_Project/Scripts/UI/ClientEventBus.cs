@@ -10,12 +10,21 @@ namespace DesignPatternLab.UI
 
         private void OnEnable()
         {
+            RaceEventBus.Subscribe(RaceEventType.COUNTDOWN, HideButton);
+            RaceEventBus.Subscribe(RaceEventType.START, HideButton);
             RaceEventBus.Subscribe(RaceEventType.STOP, Restart);
         }
 
         private void OnDisable()
         {
+            RaceEventBus.Unsubscribe(RaceEventType.COUNTDOWN, HideButton);
+            RaceEventBus.Unsubscribe(RaceEventType.START, HideButton);
             RaceEventBus.Unsubscribe(RaceEventType.STOP, Restart);
+        }
+
+        private void HideButton()
+        {
+            _isButtonEnabled = false;
         }
 
         private void Restart()
@@ -32,10 +41,7 @@ namespace DesignPatternLab.UI
             GUILayout.Label("Race ready - Chapter 6");
 
             if (GUILayout.Button("Start Countdown"))
-            {
-                _isButtonEnabled = false;
                 RaceEventBus.Publish(RaceEventType.COUNTDOWN);
-            }
 
             GUILayout.EndArea();
         }
