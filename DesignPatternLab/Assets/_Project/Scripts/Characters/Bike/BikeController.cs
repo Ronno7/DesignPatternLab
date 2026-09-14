@@ -1,3 +1,4 @@
+using DesignPatternLab.Systems.Events;
 using UnityEngine;
 
 namespace DesignPatternLab.Characters.Bike
@@ -24,6 +25,22 @@ namespace DesignPatternLab.Characters.Bike
             _stopState = gameObject.AddComponent<BikeStopState>();
             _turnState = gameObject.AddComponent<BikeTurnState>();
             _bikeStateContext.Transition(_stopState);
+        }
+
+        private void OnEnable()
+        {
+            RaceEventBus.Subscribe(RaceEventType.START, StartBike);
+            RaceEventBus.Subscribe(RaceEventType.STOP, StopBike);
+        }
+
+        private void OnDisable()
+        {
+            RaceEventBus.Unsubscribe(RaceEventType.START, StartBike);
+            RaceEventBus.Unsubscribe(RaceEventType.STOP, StopBike);
+
+            // The chapter's state components are separate MonoBehaviours.
+            // Stop their movement when this controller is disabled.
+            CurrentSpeed = 0;
         }
 
         public void StartBike()
