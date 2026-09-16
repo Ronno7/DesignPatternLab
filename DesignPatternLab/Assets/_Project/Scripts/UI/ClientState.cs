@@ -21,7 +21,7 @@ namespace DesignPatternLab.UI
             GUILayout.Label("State: " + _bikeController.CurrentState.GetType().Name);
             GUILayout.Label("Speed: " + _bikeController.CurrentSpeed.ToString("0.0"));
 
-            GUILayout.Label("Turbo: " + (_bikeController.IsTurboOn ? "On" : "Off"));
+            // Chapter 9's HUD observer now displays Turbo and health.
             GUILayout.EndArea();
         }
     }

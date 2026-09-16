@@ -29,20 +29,21 @@ namespace DesignPatternLab.Systems.Replay
             if (IsReplaying)
                 return;
 
-            command.Execute();
-
-            if (!IsRecording)
-                return;
-
-            List<Command> commands;
-            if (!_recordedCommands.TryGetValue(_recordingTime, out commands))
+            // Record first: a lethal DamageBike command can stop the race.
+            if (IsRecording)
             {
-                commands = new List<Command>();
-                _recordedCommands.Add(_recordingTime, commands);
+                List<Command> commands;
+                if (!_recordedCommands.TryGetValue(_recordingTime, out commands))
+                {
+                    commands = new List<Command>();
+                    _recordedCommands.Add(_recordingTime, commands);
+                }
+
+                commands.Add(command);
+                RecordedCommandCount++;
             }
 
-            commands.Add(command);
-            RecordedCommandCount++;
+            command.Execute();
         }
 
         public void Record()
@@ -91,7 +92,13 @@ namespace DesignPatternLab.Systems.Replay
                    _recordedCommands.Keys[_replayIndex] <= _replayTime)
             {
                 foreach (Command command in _recordedCommands.Values[_replayIndex])
+                {
                     command.Execute();
+
+                    // A command may have published STOP itself (for example, at zero health).
+                    if (!IsReplaying)
+                        return;
+                }
 
                 _replayIndex++;
             }

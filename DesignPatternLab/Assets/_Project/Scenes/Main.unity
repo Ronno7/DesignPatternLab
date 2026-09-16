@@ -137,6 +137,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1001, guid: 8b13b930b8e65a2bba448e4bcaa29ec1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 918476677}
+    - targetCorrespondingSourceObject: {fileID: 1001, guid: 8b13b930b8e65a2bba448e4bcaa29ec1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 918476679}
   m_SourcePrefab: {fileID: 100100000, guid: 8b13b930b8e65a2bba448e4bcaa29ec1, type: 3}
 --- !u!4 &1002 stripped
 Transform:
@@ -245,11 +248,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1003}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cc94974df285c69992be0c1bdbfd710, type: 3}
+  m_Script: {fileID: 11500000, guid: 21ed8964bab15064b53ab2c6578a689c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::DesignPatternLab.CameraSystem.CameraController
   target: {fileID: 1002}
   offset: {x: 0, y: 8, z: -12}
+  shakeMagnitude: 0.1
 --- !u!1 &1008
 GameObject:
   m_ObjectHideFlags: 0
@@ -4137,6 +4141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4468ae54e73a52c791eb1d606bfee1a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DesignPatternLab.UI.HUDController
+  target: {fileID: 1002}
 --- !u!114 &776375246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4193,6 +4198,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b9f5da650b9510abd25ebad3b1f0a52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DesignPatternLab.Systems.Replay.Invoker
+--- !u!114 &918476679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918476676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23e95dd865635c11845ad131d716bf3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DesignPatternLab.UI.ClientObserver
 --- !u!1 &1499268819
 GameObject:
   m_ObjectHideFlags: 0
