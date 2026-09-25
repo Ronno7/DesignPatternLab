@@ -10,6 +10,10 @@ namespace DesignPatternLab.Systems.Pooling
         [Min(1)] public int maxPoolSize = 10;
         [Min(0)] public int stackDefaultCapacity = 10;
         [SerializeField] private Transform spawnCenter;
+        [Min(0.1f)] public float droneLifetime = 3f;
+
+        // The strategy client chooses behavior; the pool still owns reuse.
+        public event System.Action<Drone> Spawned;
 
         private ObjectPool<Drone> _pool;
 
@@ -57,11 +61,16 @@ namespace DesignPatternLab.Systems.Pooling
             // Place drones above the road and ahead of the follow camera.
             Vector3 center = spawnCenter ? spawnCenter.position : transform.position;
             Vector3 offset = Random.insideUnitSphere * 4f;
-            offset.y = 2f + Mathf.Abs(offset.y);
+            offset.y = Random.Range(2f, 3f);
             offset.z += 8f;
             drone.transform.position = center + offset;
+            Vector3 position = drone.transform.position;
+            position.x = Mathf.Clamp(position.x, -3.5f, 3.5f);
+            drone.transform.position = position;
             drone.transform.rotation = Quaternion.identity;
+            drone.Lifetime = droneLifetime;
             drone.gameObject.SetActive(true);
+            Spawned?.Invoke(drone);
         }
 
         private void OnReturnedToPool(Drone drone)

@@ -1,17 +1,26 @@
 using DesignPatternLab.Systems.Events;
+using DesignPatternLab.Systems.PowerUps;
 using UnityEngine;
 
 namespace DesignPatternLab.Characters.Bike
 {
-    // State/Command receiver, race subscriber, and Chapter 9 observer subject.
+    // State/Command receiver, Observer subject, and Chapter 10 visitable structure.
     [DisallowMultipleComponent]
-    public class BikeController : Subject
+    [RequireComponent(typeof(BikeShield), typeof(BikeEngine), typeof(BikeWeapon))]
+    public class BikeController : Subject, IBikeElement
     {
         [Min(0f)] public float maxSpeed = 2.0f;
         [Min(0f)] public float turnDistance = 2.0f;
         [SerializeField] private float health = 100f;
 
-        public float CurrentSpeed { get; set; }
+        public float CurrentSpeed
+        {
+            get => _baseSpeed * (Engine ? Engine.SpeedMultiplier(_isTurboOn) : 1f);
+            set => _baseSpeed = value;
+        }
+        public BikeShield Shield { get; private set; }
+        public BikeEngine Engine { get; private set; }
+        public BikeWeapon Weapon { get; private set; }
         public Direction CurrentTurnDirection { get; private set; }
         public IBikeState CurrentState => _bikeStateContext.CurrentState;
         public bool IsTurboOn => _isTurboOn;
@@ -25,12 +34,24 @@ namespace DesignPatternLab.Characters.Bike
         private float _initialHealth;
         private Vector3 _initialPosition;
         private Quaternion _initialRotation;
+        private IBikeElement[] _bikeElements;
+        private float _baseSpeed;
+        private float _initialShieldHealth, _initialTurboBoost, _initialWeaponStrength;
+        private int _initialWeaponRange;
 
         private void Awake()
         {
             _initialPosition = transform.position;
             _initialRotation = transform.rotation;
             _initialHealth = health;
+            Shield = GetComponent<BikeShield>();
+            Engine = GetComponent<BikeEngine>();
+            Weapon = GetComponent<BikeWeapon>();
+            _bikeElements = new IBikeElement[] { Shield, Engine, Weapon };
+            _initialShieldHealth = Shield.health;
+            _initialTurboBoost = Engine.turboBoost;
+            _initialWeaponRange = Weapon.range;
+            _initialWeaponStrength = Weapon.strength;
 
             // Initialize before other components can issue commands in Start.
             _bikeStateContext = new BikeStateContext(this);
@@ -107,11 +128,26 @@ namespace DesignPatternLab.Characters.Bike
                 RaceEventBus.Publish(RaceEventType.STOP);
         }
 
+        public void Accept(IVisitor visitor)
+        {
+            if (visitor == null)
+                return;
+
+            foreach (IBikeElement element in _bikeElements)
+                element.Accept(visitor);
+
+            NotifyObservers();
+        }
+
         public void ResetPosition()
         {
             transform.position = _initialPosition;
             transform.rotation = _initialRotation;
             health = _initialHealth;
+            Shield.health = _initialShieldHealth;
+            Engine.turboBoost = _initialTurboBoost;
+            Weapon.range = _initialWeaponRange;
+            Weapon.strength = _initialWeaponStrength;
             StopBike();
         }
     }

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c27f26bb7ff43fd81e13c30f58e31e5, type: 3}
+  m_Name: ShieldPowerUp
+  m_EditorClassIdentifier:
+  powerupName: Shield
+  powerupPrefab: {fileID: 1005, guid: 9eba8c539a914b5b856acb3a8eb7a47e, type: 3}
+  powerupDescription: Fully restores shield health.
+  healShield: 1
+  turboBoost: 0
+  weaponRange: 0
+  weaponStrength: 0

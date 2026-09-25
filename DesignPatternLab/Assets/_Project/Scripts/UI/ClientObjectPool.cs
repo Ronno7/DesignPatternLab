@@ -25,7 +25,7 @@ namespace DesignPatternLab.UI
             GUILayout.Label("Active: " + _pool.ActiveCount + "   In pool: " + _pool.InactiveCount);
             GUILayout.Label("Created: " + _pool.CreatedCount);
             GUILayout.Label("Destroyed: " + _pool.DestroyedCount);
-            GUILayout.Label("Drones return after 3 seconds.");
+            GUILayout.Label("Drones return after " + _pool.droneLifetime.ToString("0.#") + " seconds.");
             GUILayout.EndArea();
         }
     }

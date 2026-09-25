@@ -4,7 +4,7 @@ using UnityEngine.Pool;
 
 namespace DesignPatternLab.Characters.Drone
 {
-    // Adapted from David Baron, Chapter 8.
+    // Chapter 8 pooled object and Chapter 11 Strategy context.
     public class Drone : MonoBehaviour
     {
         public IObjectPool<Drone> Pool { get; set; }
@@ -13,19 +13,38 @@ namespace DesignPatternLab.Characters.Drone
         [SerializeField, Min(1f)] private float maxHealth = 100f;
         [SerializeField, Min(0.1f)] private float timeToSelfDestruct = 3f;
 
+        [Header("Chapter 11 maneuvers")]
+        [Tooltip("Seconds per movement segment, as in the book's Lerp examples.")]
+        [Min(0.01f)] public float speed = 1f;
+        [Min(0f)] public float maxHeight = 5f;
+        [Min(0f)] public float weavingDistance = 1.5f;
+        [Min(0f)] public float fallbackDistance = 20f;
+        [SerializeField, Min(0f)] private float rayDistance = 15f;
+
+        public IManeuverBehaviour CurrentStrategy { get; private set; }
+        public float Lifetime
+        {
+            get => timeToSelfDestruct;
+            set => timeToSelfDestruct = Mathf.Max(0.1f, value);
+        }
+        public Vector3 LaserDirection => transform.TransformDirection(
+            Quaternion.Euler(-45f, 0f, 0f) * Vector3.back);
+
         private bool _isReturned = true;
+        private Coroutine _maneuver;
 
         private void OnEnable()
         {
             _isReturned = false;
             ResetDrone();
-            AttackPlayer();
             StartCoroutine(SelfDestruct());
         }
 
         private void OnDisable()
         {
             StopAllCoroutines();
+            _maneuver = null;
+            CurrentStrategy = null;
             ResetDrone();
             _isReturned = true;
         }
@@ -42,7 +61,10 @@ namespace DesignPatternLab.Characters.Drone
                 return;
 
             _isReturned = true;
-            Pool.Release(this);
+            if (Pool != null)
+                Pool.Release(this);
+            else
+                gameObject.SetActive(false);
         }
 
         private void ResetDrone()
@@ -52,8 +74,43 @@ namespace DesignPatternLab.Characters.Drone
 
         public void AttackPlayer()
         {
-            // The chapter leaves actual attack behavior for a later lesson.
-            Debug.Log("Attack player!", this);
+            Vector3 direction = LaserDirection;
+            bool hit = Physics.Raycast(transform.position, direction, out RaycastHit hitInfo,
+                rayDistance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+            Debug.DrawRay(transform.position, direction * (hit ? hitInfo.distance : rayDistance),
+                hit ? Color.green : Color.blue);
+        }
+
+        private void Update()
+        {
+            // Match the chapter's diagnostic laser: no shield damage is applied.
+            AttackPlayer();
+        }
+
+        public void ApplyStrategy(IManeuverBehaviour strategy)
+        {
+            if (!isActiveAndEnabled)
+                return;
+
+            StopManeuver();
+            CurrentStrategy = strategy;
+            strategy?.Maneuver(this);
+        }
+
+        // Own the coroutine here so pooling and strategy changes can cancel it.
+        // Do not stop the separate Chapter 8 lifetime coroutine when switching.
+        public void StartManeuver(IEnumerator maneuver)
+        {
+            StopManeuver();
+            if (isActiveAndEnabled && maneuver != null)
+                _maneuver = StartCoroutine(maneuver);
+        }
+
+        private void StopManeuver()
+        {
+            if (_maneuver != null)
+                StopCoroutine(_maneuver);
+            _maneuver = null;
         }
 
         public void TakeDamage(float amount)
