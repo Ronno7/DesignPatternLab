@@ -29,8 +29,8 @@ namespace DesignPatternLab.UI
             GUILayout.Label("Power-ups - Chapter 10 (Visitor)");
             GUILayout.Label("Shield: " + _bike.Shield.health.ToString("0") + "%");
             GUILayout.Label("Turbo boost: " + _bike.Engine.turboBoost.ToString("0") + " / " + _bike.Engine.maxTurboBoost);
-            GUILayout.Label("Weapon range: " + _bike.Weapon.range + " / " + _bike.Weapon.maxRange);
-            GUILayout.Label("Weapon strength: " + _bike.Weapon.strength.ToString("0") + " / " + _bike.Weapon.maxStrength);
+            GUILayout.Label("Base weapon range: " + _bike.Weapon.range + " / " + _bike.Weapon.maxRange);
+            GUILayout.Label("Base weapon strength: " + _bike.Weapon.strength.ToString("0") + " / " + _bike.Weapon.maxStrength);
             DrawButton("PowerUp Shield", shieldPowerUp);
             DrawButton("PowerUp Engine", enginePowerUp);
             DrawButton("PowerUp Weapon", weaponPowerUp);

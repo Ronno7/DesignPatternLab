@@ -47,6 +47,7 @@ namespace DesignPatternLab.Characters.Bike
             Shield = GetComponent<BikeShield>();
             Engine = GetComponent<BikeEngine>();
             Weapon = GetComponent<BikeWeapon>();
+            Weapon.InitializeWeapon();
             _bikeElements = new IBikeElement[] { Shield, Engine, Weapon };
             _initialShieldHealth = Shield.health;
             _initialTurboBoost = Engine.turboBoost;
@@ -75,6 +76,8 @@ namespace DesignPatternLab.Characters.Bike
             // The chapter's state components are separate MonoBehaviours.
             // Stop their movement when this controller is disabled.
             CurrentSpeed = 0;
+            if (Weapon)
+                Weapon.StopFiring();
             _isEngineOn = false;
             _isTurboOn = false;
             NotifyObservers();
@@ -92,6 +95,7 @@ namespace DesignPatternLab.Characters.Bike
 
         public void StopBike()
         {
+            Weapon.StopFiring();
             _isEngineOn = false;
             _isTurboOn = false;
             _bikeStateContext.Transition(_stopState);
@@ -148,6 +152,7 @@ namespace DesignPatternLab.Characters.Bike
             Engine.turboBoost = _initialTurboBoost;
             Weapon.range = _initialWeaponRange;
             Weapon.strength = _initialWeaponStrength;
+            Weapon.ResetForRun();
             StopBike();
         }
     }

@@ -306,6 +306,9 @@ MonoBehaviour:
   maxRange: 25
   strength: 25
   maxStrength: 50
+  weaponConfig: {fileID: 11400000, guid: bbc06afc99b843ed8a12ccfb1eaa81b7, type: 2}
+  mainAttachment: {fileID: 11400000, guid: 8841e05d66264db29cc8a589725ff550, type: 2}
+  secondaryAttachment: {fileID: 11400000, guid: 40f836d2bf684b77ae692633cc1dca9b, type: 2}
 --- !u!54 &1013
 Rigidbody:
   m_ObjectHideFlags: 0
